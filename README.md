@@ -1,46 +1,139 @@
-# Getting Started with Create React App
+# react-infinite-refresh-load-hook Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the demo of the react-infinite-refresh-load-hook `useInfiniteScroll`
 
-## Available Scripts
+[Home Page](https://github.com/Renfrew/react-infinite-refresh-load-hook/#readme)
 
-In the project directory, you can run:
+## Possible library usage
 
-### `yarn start`
+```jsx
+// Load More and refresh within a choosen container
+const App = () => {
+  const handleLoadMore = React.useCallback(() => {
+    ...
+  }, []);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  const handleRefresh = React.useCallback(() => {
+    ...
+  }, []);
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  const [infiniteRef, onLoadAnchorRef, onRefreshAnchorRef] = useInfiniteScroll({
+    onLoadMore: handleLoadMore,
+    onRefresh: handleRefresh,
+  });
 
-### `yarn test`
+  return (
+    <React.Fragment>
+      {/* Set the container ref, which is scrollable */}
+      {/* if this is not set, it will default to window */}
+      <ul ref={infiniteRef}>
+        {data.map((_, idx) => {
+          if (idx === 0) {
+            return (
+              <li
+                key={idx}
+                // Set the ref of element that will fire Refresh
+                // when it is visable on the container
+                ref={onRefreshAnchorRef}
+              >
+                {idx}
+              </li>
+            );
+          }
+          if (idx === data.length - 2) {
+            return (
+              <li
+                key={idx}
+                // Set the ref of element that will fire loadMore
+                // when it is visable on the container
+                ref={onLoadAnchorRef}
+              >
+                {item.value}
+              </li>
+            );
+          }
+          return (
+            <li key={idx}>{idx}</li>
+          );
+        })}
+      </Scrollable>
+    </React.Fragment>
+  );
+};
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```jsx
+// Only refresh when scroll the window up
+const App = () => {
+  const handleRefresh = React.useCallback(() => {
+    ...
+  }, []);
 
-### `yarn build`
+  const [, , onRefreshAnchorRef] = useInfiniteScroll({
+    onRefresh: handleRefresh,
+  });
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  return (
+    <React.Fragment>
+      <ul>
+        {data.map((_, idx) => {
+          if (idx === 0) {
+            return (
+              <li
+                key={idx}
+                // Set the ref of element that will fire Refresh
+                // when it is visable on the window
+                ref={onRefreshAnchorRef}
+              >
+                {idx}
+              </li>
+            );
+          }
+          return (
+            <li key={idx}>{idx}</li>
+          );
+        })}
+      </Scrollable>
+    </React.Fragment>
+  );
+};
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```jsx
+// Only Load More within a choosen container when scroll up
+const App = () => {
+  const handleLoadMore = React.useCallback(() => {
+    ...
+  }, []);
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  const [infiniteRef, onLoadAnchorRef] = useInfiniteScroll({
+    onLoadMore: handleLoadMore,
+  });
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+  return (
+    <React.Fragment>
+      {/* Set the container ref, which is scrollable */}
+      {/* if this is not set, it will default to window */}
+      <ul ref={infiniteRef}>
+        {data.map((_, idx) => {
+          if (idx === 0) {
+            return (
+              <li
+                key={idx}
+                // Set the ref of element that will fire Refresh
+                // when it is visable on the container
+                ref={onLoadAnchorRef}
+              >
+                {idx}
+              </li>
+            );
+          }
+          return (
+            <li key={idx}>{idx}</li>
+          );
+        })}
+      </Scrollable>
+    </React.Fragment>
+  );
+};
+```
